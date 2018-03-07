@@ -9,7 +9,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -71,9 +74,30 @@ public class SocketActivity extends Activity{
             pw.flush();
             message+="\n信息已发出";
             setMessage();
+            // 关闭socket输出流
+            socket.shutdownOutput();
+
+            // 接受服务端信息
+            // 字节输入流
+            InputStream is = socket.getInputStream();
+            // 字符输入流
+            InputStreamReader isr = new InputStreamReader(is);
+            // 缓冲
+            BufferedReader br = new BufferedReader(isr);
+            // 读取
+            String info = null;
+            while ((info = br.readLine()) != null) {
+                message+="\n";
+                message+=info;
+            }
+            setMessage();
+            // 关闭socket输入流(如果不注释这行代码会报错，不知道为什么？？？？？)
+//            socket.shutdownInput();
 
             // 关闭资源
-            socket.shutdownOutput();
+            br.close();
+            isr.close();
+            is.close();
             pw.close();
             os.close();
             socket.close();

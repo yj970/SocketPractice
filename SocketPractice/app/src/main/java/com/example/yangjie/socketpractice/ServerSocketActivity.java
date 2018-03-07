@@ -10,6 +10,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -63,12 +65,26 @@ public class ServerSocketActivity extends AppCompatActivity {
                 message+=info;
             }
             setMessage();
-            // 关闭socket
+            // 关闭socket输入流
             socket.shutdownInput();
+
+            // 回应客户端
+            // 输出字节流
+            OutputStream os = socket.getOutputStream();
+            // 打印流
+            PrintWriter pw = new PrintWriter(os);
+            pw.write("我是服务端，我收到了你的信息了！");
+            // 刷新、输出
+            pw.flush();
+            // 关闭socket输出流
+            socket.shutdownOutput();
             // 关闭资源
+            pw.close();
+            os.close();
             br.close();
             isr.close();
             is.close();
+            socket.close();
             serverSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
