@@ -17,8 +17,19 @@
 
 
 
-
         <activity android:name=".SocketActivity">
+
+        </activity>
+
+
+        <activity android:name=".UDPServerSocketActivity">
+
+
+
+        </activity>
+
+        <activity android:name=".UDPSocketActivity">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -9,18 +9,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.net.Socket;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 
 /**
  * Created by yangjie on 2018/3/7.
  */
-public class SocketActivity extends Activity{
+public class UDPSocketActivity extends Activity {
     private TextView tv;
     private EditText et;
     private Button btn;
@@ -62,49 +61,24 @@ public class SocketActivity extends Activity{
 
     private void SendSocket() {
         try {
-            Socket socket = new Socket(et.getText().toString(), 4444);
-            message += "连接的服务器ip地址是"+et.getText().toString()+":4444";
-            setMessage();
-            // 输出字节流
-            OutputStream os = socket.getOutputStream();
-            // 打印流
-            PrintWriter pw = new PrintWriter(os);
-            pw.write("我是客户端，服务端收到了吗？");
-            // 刷新、输出
-            pw.flush();
-            message+="\n信息已发出";
-            setMessage();
-            // 关闭socket输出流
-            socket.shutdownOutput();
-
-            // 接受服务端信息
-            // 字节输入流
-            InputStream is = socket.getInputStream();
-            // 字符输入流
-            InputStreamReader isr = new InputStreamReader(is);
-            // 缓冲
-            BufferedReader br = new BufferedReader(isr);
-            // 读取
-            String info = null;
-            while ((info = br.readLine()) != null) {
-                message+="\n";
-                message+=info;
-            }
-            setMessage();
-            // 关闭socket输入流(如果不注释这行代码会报错，不知道为什么？？？？？)
-//            socket.shutdownInput();
-
-            // 关闭资源
-            br.close();
-            isr.close();
-            is.close();
-//            pw.close();输出流不能关闭，关闭这个会导致socket也会被关闭，只关闭socket就好
-            os.close();
+            // 定义发送的信息
+            InetAddress inetAddress = InetAddress.getByName(et.getText().toString());
+            int port = 4444;
+            byte[] bytes = "你好吗？服务器，我是UDP客户端".getBytes();
+            // DatagramPacket
+            DatagramPacket packet = new DatagramPacket(bytes, bytes.length, inetAddress, port);
+            // socket
+            DatagramSocket socket = new DatagramSocket();
+            // 发送
+            socket.send(packet);
+            // 关闭
             socket.close();
-
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (SocketException e) {
+            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-            setMessage(e.getMessage());
         }
     }
 

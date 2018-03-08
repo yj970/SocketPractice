@@ -79,7 +79,7 @@ public class ServerSocketActivity extends AppCompatActivity {
             // 关闭socket输出流
             socket.shutdownOutput();
             // 关闭资源
-            pw.close();
+//            pw.close(); 输出流不能关闭，关闭这个会导致socket也会被关闭，只关闭socket就好
             os.close();
             br.close();
             isr.close();
